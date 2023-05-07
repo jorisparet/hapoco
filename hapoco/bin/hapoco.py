@@ -40,7 +40,7 @@ def main():
                         default=(0.75, 0.50),
                         nargs='+',
                         type=float,
-                        help='Coordinates of the control area of the main hand. The second control area is placed symmetrically.')
+                        help='Coordinates of the control area of the main hand. The second control area is placed symmetrically')
     parser.add_argument('-smin', '--sensitivity_min',
                         default=1,
                         type=int,
@@ -52,11 +52,15 @@ def main():
     parser.add_argument('-rmin', '--radius_min',
                         default=0.03,
                         type=float,
-                        help='Minimum radius below which no action is performed.')
+                        help='Minimum radius below which no action is performed')
     parser.add_argument('-rmax', '--radius_max',
                         default=0.2,
                         type=float,
-                        help='Maximum radius above which no action is performed.')
+                        help='Maximum radius above which no action is performed')
+    parser.add_argument('-sc', '--scrolling_speed',
+                        default=1,
+                        type=int,
+                        help='Scrolling speed')
     parser.add_argument('--show',
                         action='store_true',
                         help='Real-time display of the processed camera feed')
@@ -78,6 +82,7 @@ def main():
     sensitivity_max = args.sensitivity_max
     radius_min = args.radius_min
     radius_max = args.radius_max
+    scrolling_speed = args.scrolling_speed
     show_feed = args.show
     tracking_points = args.tracking_landmarks
     device = args.device
@@ -90,14 +95,15 @@ def main():
 
     # Controllers
     cursor_controller = CursorController(origin=main_origin,
-                                           sensitivity_min=sensitivity_min,
-                                           sensitivity_max=sensitivity_max,
-                                           radius_min=radius_min,
-                                           radius_max=radius_max)
+                                         sensitivity_min=sensitivity_min,
+                                         sensitivity_max=sensitivity_max,
+                                         radius_min=radius_min,
+                                         radius_max=radius_max)
     second_origin = (1-main_origin[0], main_origin[1])
     action_controller = ActionController(origin=second_origin,
                                          radius_min=radius_min,
-                                         radius_max=radius_max)
+                                         radius_max=radius_max,
+                                         scrolling_speed=scrolling_speed)
 
     # View
     if view == 'down':

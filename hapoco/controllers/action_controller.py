@@ -5,11 +5,11 @@ from .controller import HandController
 
 class ActionController(HandController):
 
-    def __init__(self, origin=(0.25, 0.5), radius_min=0.05, radius_max=0.20, filter=None):
+    def __init__(self, origin=(0.25, 0.5), radius_min=0.05, radius_max=0.20, scrolling_speed=1, filter=None):
         HandController.__init__(self, origin=origin, radius_min=radius_min, radius_max=radius_max, filter=filter)
         self.left_down = False
         self.active_right_click = False
-        self.scrolling_speed = 1
+        self.scrolling_speed = scrolling_speed
 
     def operate(self, center):
         vec_origin_to_center = center - self.origin
