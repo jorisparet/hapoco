@@ -36,11 +36,16 @@ def main():
                         choices=['down', 'front'],
                         type=str,
                         help='Camera view ("down": camera looks down, "front": camera faces the user)')
-    parser.add_argument('-o', '--origin',
+    parser.add_argument('-or', '--origin_right',
                         default=(0.75, 0.50),
                         nargs='+',
                         type=float,
-                        help='Coordinates of the control area of the main hand. The second control area is placed symmetrically')
+                        help='Coordinates of the control area of the right hand')
+    parser.add_argument('-ol', '--origin_left',
+                        default=(0.25, 0.50),
+                        nargs='+',
+                        type=float,
+                        help='Coordinates of the control area of the left hand')
     parser.add_argument('-smin', '--sensitivity_min',
                         default=1,
                         type=int,
@@ -77,7 +82,8 @@ def main():
     # Custom variables linked to parser
     main_hand = args.main_hand
     view = args.view
-    main_origin = args.origin
+    origin_right = args.origin_right
+    origin_left = args.origin_left
     sensitivity_min = args.sensitivity_min
     sensitivity_max = args.sensitivity_max
     radius_min = args.radius_min
@@ -94,14 +100,11 @@ def main():
     # motion_smoothing = [OneEuroFilter(0.0, 0.0, min_cutoff=min_cutoff_filter, beta=beta_filter) for _ in range(2)]
 
     # Controllers
-    cursor_controller = CursorController(origin=main_origin,
-                                         sensitivity_min=sensitivity_min,
+    cursor_controller = CursorController(sensitivity_min=sensitivity_min,
                                          sensitivity_max=sensitivity_max,
                                          radius_min=radius_min,
                                          radius_max=radius_max)
-    second_origin = (1-main_origin[0], main_origin[1])
-    action_controller = ActionController(origin=second_origin,
-                                         radius_min=radius_min,
+    action_controller = ActionController(radius_min=radius_min,
                                          radius_max=radius_max,
                                          scrolling_speed=scrolling_speed)
 
@@ -121,7 +124,10 @@ def main():
         left_controller = action_controller
     if main_hand == 'left':
         right_controller = action_controller
-        left_controller = cursor_controller       
+        left_controller = cursor_controller
+    # Controllers' origins
+    right_controller.origin = origin_right
+    left_controller.origin = origin_left
 
     # Webcam input
     capture = cv2.VideoCapture(device)
