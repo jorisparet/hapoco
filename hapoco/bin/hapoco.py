@@ -109,13 +109,13 @@ def main():
                                          scrolling_speed=scrolling_speed)
 
     # View
+    sides = ['left', 'right']
     if view == 'down':
         flip = -1
-        # invert left/right hands due to mirror symmetry
-        sides = ['left', 'right']
-        main_hand = sides[1 - sides.index(main_hand)]
+        switch_prediction = True
     if view == 'front':
         flip = 1
+        switch_prediction = False
 
     # Main hand
     right_controller, left_controller = None, None
@@ -154,9 +154,13 @@ def main():
                 for h_idx, h in enumerate(results.multi_handedness):
                     
                     h_label = h.classification[0].label # TODO: this index makes no sense...
+                    # TODO: below is not very elegant
+                    # switch the predicted hand left <--> right for view "down" due to the image inversion
+                    if switch_prediction:
+                        h_label = sides[1 - sides.index(h_label.lower())]
                     h_landmarks = results.multi_hand_landmarks[h_idx].landmark
                     hand = Hand(h_label, h_landmarks, tracking_points=tracking_points)
-                    
+
                     # Operate
                     if hand.label == 'right':
                         right_controller.operate(hand.tracking_center)
